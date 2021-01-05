@@ -23,9 +23,9 @@ fn main() -> std::io::Result<()> {
     let mut vm = VM::new(memory);
 
     loop {
+        print!("{}: ", vm.get_ip());
         match vm.get_next_operation() {
             Ok(operation) => {
-                print!("{}: ", vm.get_ip());
                 match operation {
                     Operation::Halt => println!("halt"),
                     Operation::SetRegister(register, value) => {

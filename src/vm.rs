@@ -1,7 +1,7 @@
 use std::collections::VecDeque;
 
 const MOD: u16 = 32_768;
-const MAX_CYCLES: u32 = 5_000_000;
+const MAX_CYCLES: u32 = 10_000_000;
 pub type Word = u16;
 
 #[derive(Debug)]
@@ -14,6 +14,7 @@ pub struct VM {
     ip: usize,
     input: VecDeque<Word>,
     output: Vec<char>,
+    debug: bool,
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -68,6 +69,7 @@ impl VM {
             ip: 0,
             input: VecDeque::new(),
             output: vec![],
+            debug: false,
         }
     }
 
@@ -85,6 +87,18 @@ impl VM {
 
     pub fn get_ip(&self) -> usize {
         self.ip
+    }
+
+    pub fn set_debug_mode(&mut self) {
+        self.debug = true
+    }
+
+    pub fn fix_teleporter(&mut self) {
+        self.memory[522] = 32768;
+        self.registers[7] = 25734;
+        self.memory[5489] = 21;
+        self.memory[5490] = 21;
+        self.memory[5495] = 7;
     }
 
     pub fn get_output(&mut self) -> String {
@@ -107,6 +121,11 @@ impl VM {
             }
 
             self.cycles += 1;
+
+            if self.debug {
+                println!("IP: {}", self.ip);
+            }
+
             match self.get_next_operation() {
                 Ok(operation) => match operation {
                     Operation::Halt => self.halt(),
